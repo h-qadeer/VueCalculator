@@ -1,6 +1,12 @@
 <template>
   <div class="calculator">
-    <div class="display">{{current || '0'}}</div>
+    <div 
+    class="display" v-if="this.isloading === false">{{current || '0'}} 
+      </div>
+      <div class="display" v-if="this.isloading === true">
+        Loading...
+      </div>
+    
     <div @click="clear" class="btn cancel">C</div>
     
     <div @click="percent" class="btn">%</div>
@@ -31,15 +37,30 @@ export default {
       current: '',
       operator: null,
       operatorClicked: false,
+      isloading: false,
     }
   },
+  watch: {
+    // Creating function
+    // for input component
+    current: function() {
+
+  if(this.isloading){
+    setTimeout(()=>{ 
+      this.isloading=false 
+      }, 2000);
+    }
+ },
+
+},
   methods: {
     clear(){
       this.current = '';
     },
-    
+  
     percent(){
       this.current = `${parseFloat(this.current) / 100}`
+      this.isloading=true;
     },
     append(number){
       if(this.operatorClicked){
@@ -78,14 +99,18 @@ export default {
       this.current = `${this.operator(parseFloat(this.previous),parseFloat(this.current)
      
       )}`;
+      this.isloading=true;
       this.previous = null;
+    
     }
+    
   }
+  
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .calculator{
   width: 350px;
   margin: 0 auto;
